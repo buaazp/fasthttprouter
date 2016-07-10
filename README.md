@@ -302,3 +302,5 @@ But this approach sidesteps the strict core rules of this router to avoid routin
 If the HttpRouter is a bit too minimalistic for you, you might try one of the following more high-level 3rd-party web frameworks building upon the HttpRouter package:
 
 - Waiting for you to do this...
+
+- [CleverGo](https://github.com/headwindfly/clevergo)
