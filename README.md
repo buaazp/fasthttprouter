@@ -6,7 +6,7 @@
 FastHttpRouter is forked from [httprouter](https://github.com/julienschmidt/httprouter) which is a lightweight high performance HTTP request router
 (also called *multiplexer* or just *mux* for short) for [fasthttp](https://github.com/valyala/fasthttp).
 
-In contrast to the [RequestHandler](https://godoc.org/github.com/valyala/fasthttp#RequestHandler) functions of valyala's `fasthttp` package, this router supports variables in the routing pattern and matches against the request method. It also scales better.
+In addition to the [RequestHandler](https://godoc.org/github.com/valyala/fasthttp#RequestHandler) functions of valyala's `fasthttp` package, this router supports fetching `param` variables into `RequestCtx.UserVales` and matching against the request method. It also scales better.
 
 The router is optimized for high performance and a small memory footprint. It scales well even with very long paths and a large number of routes. A compressing dynamic trie (radix tree) structure is used for efficient matching.
 
@@ -79,12 +79,12 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func Index(ctx *fasthttp.RequestCtx, _ fasthttprouter.Params) {
+func Index(ctx *fasthttp.RequestCtx) {
 	fmt.Fprint(ctx, "Welcome!\n")
 }
 
-func Hello(ctx *fasthttp.RequestCtx, ps fasthttprouter.Params) {
-	fmt.Fprintf(ctx, "hello, %s!\n", ps.ByName("name"))
+func Hello(ctx *fasthttp.RequestCtx) {
+	fmt.Fprintf(ctx, "hello, %s!\n", ctx.UserValue("name"))
 }
 
 func main() {
@@ -98,7 +98,7 @@ func main() {
 
 ### Named parameters
 
-As you can see, `:name` is a *named parameter*. The values are accessible via `httprouter.Params`, which is just a slice of `httprouter.Param`s. You can get the value of a parameter either by its index in the slice, or by using the `ByName(name)` method: `:name` can be retrived by `ByName("name")`.
+As you can see, `:name` is a *named parameter*. The values are accessible via `RequestCtx.UserValues`. You can get the value of a parameter by using the `ctx.UserValue("name")`.
 
 Named parameters only match a single path segment:
 
@@ -174,9 +174,9 @@ Just try it out for yourself, the usage of FastHttpRouter is very straightforwar
 
 ## Where can I find Middleware *X*?
 
-This package just provides a very efficient request router with a few extra features. The router is just a [`http.Handler`][http.Handler], you can chain any http.Handler compatible middleware before the router, for example the [Gorilla handlers](http://www.gorillatoolkit.org/pkg/handlers). Or you could [just write your own](https://justinas.org/writing-http-middleware-in-go/), it's very easy!
+This package just provides a very efficient request router with a few extra features. The router is just a [`fasthttp.RequestHandler`](https://godoc.org/github.com/valyala/fasthttp#RequestHandler), you can chain any fasthttp.RequestHandler compatible middleware before the router. Or you could [just write your own](https://justinas.org/writing-http-middleware-in-go/), it's very easy!
 
-Alternatively, you could try [a web framework based on HttpRouter](#web-frameworks-based-on-httprouter).
+Alternatively, you could try a web framework based on FastHttpRouter - Coming soon.
 
 ### Multi-domain / Sub-domains
 
@@ -237,7 +237,7 @@ import (
 var basicAuthPrefix = []byte("Basic ")
 
 func BasicAuth(h fasthttprouter.Handle, user, pass []byte) fasthttprouter.Handle {
-	return fasthttprouter.Handle(func(ctx *fasthttp.RequestCtx, ps fasthttprouter.Params) {
+	return fasthttprouter.Handle(func(ctx *fasthttp.RequestCtx) {
 		// Get the Basic Authentication credentials
 		auth := ctx.Request.Header.Peek("Authorization")
 		if bytes.HasPrefix(auth, basicAuthPrefix) {
@@ -249,7 +249,7 @@ func BasicAuth(h fasthttprouter.Handle, user, pass []byte) fasthttprouter.Handle
 					bytes.Equal(pair[0], user) &&
 					bytes.Equal(pair[1], pass) {
 					// Delegate request to the given handle
-					h(ctx, ps)
+					h(ctx)
 					return
 				}
 			}
@@ -261,11 +261,11 @@ func BasicAuth(h fasthttprouter.Handle, user, pass []byte) fasthttprouter.Handle
 	})
 }
 
-func Index(ctx *fasthttp.RequestCtx, _ fasthttprouter.Params) {
+func Index(ctx *fasthttp.RequestCtx) {
 	fmt.Fprint(ctx, "Not protected!\n")
 }
 
-func Protected(ctx *fasthttp.RequestCtx, _ fasthttprouter.Params) {
+func Protected(ctx *fasthttp.RequestCtx) {
 	fmt.Fprint(ctx, "Protected!\n")
 }
 
