@@ -14,7 +14,7 @@ var basicAuthPrefix = []byte("Basic ")
 
 // BasicAuth is the basic auth handler
 func BasicAuth(h fasthttprouter.Handle, user, pass []byte) fasthttprouter.Handle {
-	return fasthttprouter.Handle(func(ctx *fasthttp.RequestCtx, ps fasthttprouter.Params) {
+	return fasthttprouter.Handle(func(ctx *fasthttp.RequestCtx) {
 		// Get the Basic Authentication credentials
 		auth := ctx.Request.Header.Peek("Authorization")
 		if bytes.HasPrefix(auth, basicAuthPrefix) {
@@ -26,7 +26,7 @@ func BasicAuth(h fasthttprouter.Handle, user, pass []byte) fasthttprouter.Handle
 					bytes.Equal(pair[0], user) &&
 					bytes.Equal(pair[1], pass) {
 					// Delegate request to the given handle
-					h(ctx, ps)
+					h(ctx)
 					return
 				}
 			}
@@ -39,12 +39,12 @@ func BasicAuth(h fasthttprouter.Handle, user, pass []byte) fasthttprouter.Handle
 }
 
 // Index is the index handler
-func Index(ctx *fasthttp.RequestCtx, _ fasthttprouter.Params) {
+func Index(ctx *fasthttp.RequestCtx) {
 	fmt.Fprint(ctx, "Not protected!\n")
 }
 
 // Protected is the Protected handler
-func Protected(ctx *fasthttp.RequestCtx, _ fasthttprouter.Params) {
+func Protected(ctx *fasthttp.RequestCtx) {
 	fmt.Fprint(ctx, "Protected!\n")
 }
 
