@@ -86,6 +86,7 @@ import (
 
 var (
 	defaultContentType = []byte("text/plain; charset=utf-8")
+	questionMark       = []byte("?")
 )
 
 // Handle is a function that can be registered to a route to handle HTTP
@@ -345,6 +346,11 @@ func (r *Router) Handler(ctx *fasthttp.RequestCtx) {
 				} else {
 					uri = path + "/"
 				}
+				queryBuf := ctx.URI().QueryString()
+				if len(queryBuf) > 0 {
+					queryBuf = append(queryBuf, questionMark...)
+					uri = uri + string(queryBuf)
+				}
 				ctx.Redirect(uri, code)
 				return
 			}
@@ -355,7 +361,13 @@ func (r *Router) Handler(ctx *fasthttp.RequestCtx) {
 					CleanPath(path),
 					r.RedirectTrailingSlash,
 				)
+
 				if found {
+					queryBuf := ctx.URI().QueryString()
+					if len(queryBuf) > 0 {
+						fixedPath = append(fixedPath, questionMark...)
+						fixedPath = append(fixedPath, queryBuf...)
+					}
 					uri := string(fixedPath)
 					ctx.Redirect(uri, code)
 					return
