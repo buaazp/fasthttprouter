@@ -213,4 +213,5 @@ But this approach sidesteps the strict core rules of this router to avoid routin
 
 If the HttpRouter is a bit too minimalistic for you, you might try one of the following more high-level 3rd-party web frameworks building upon the HttpRouter package:
 
+- [gramework](https://github.com/gramework/gramework) - The fastest and simplest web framework in Go, which [embedds](https://github.com/buaazp/fasthttprouter/issues/26) fasthttprouter. The only framework that follows license rules. Official Grafana dashboard, simple and fast Gramework Protection and many other features that just works.
 - Waiting for you to do this...
