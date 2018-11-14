@@ -184,6 +184,18 @@ func (r *Router) DELETE(path string, handle fasthttp.RequestHandler) {
 	r.Handle("DELETE", path, handle)
 }
 
+// Any registers a route that matches all the HTTP methods fasthttprouter supported.
+// GET, HEAD, OPTIONS, POST, PUT, PATCH, DELETE.
+func (r *Router) Any(path string, handle fasthttp.RequestHandler) {
+	r.Handle("GET",     path, handle)
+	r.Handle("HEAD",    path, handle)
+	r.Handle("OPTIONS", path, handle)
+	r.Handle("POST",    path, handle)
+	r.Handle("PUT",     path, handle)
+	r.Handle("PATCH",   path, handle)
+	r.Handle("DELETE",  path, handle)
+}
+
 // Handle registers a new request handle with the given path and method.
 //
 // For GET, POST, PUT, PATCH and DELETE requests the respective shortcut
