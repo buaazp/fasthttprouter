@@ -314,11 +314,11 @@ func (r *Router) Handler(ctx *fasthttp.RequestCtx) {
 				} else {
 					uri = path + "/"
 				}
-				
+
 				if len(ctx.URI().QueryString()) > 0 {
 					uri += "?" + string(ctx.QueryArgs().QueryString())
 				}
-				
+
 				ctx.Redirect(uri, code)
 				return
 			}
@@ -375,5 +375,25 @@ func (r *Router) Handler(ctx *fasthttp.RequestCtx) {
 	} else {
 		ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound),
 			fasthttp.StatusNotFound)
+	}
+}
+
+func (r *Router) Group(prefix string, group *Group) {
+	for _, v := range group.items {
+		var path string
+
+		hasSuf := strings.HasSuffix(prefix, "/")
+		hasPref := strings.HasPrefix(v.path, "/")
+
+		switch {
+		case hasSuf && hasPref:
+			path = prefix[:len(prefix) - 1] + v.path
+		case !hasSuf && !hasPref:
+			path = prefix + "/" + v.path
+		default:
+			path = prefix + v.path
+		}
+
+		r.Handle(v.method, path, v.handler)
 	}
 }
