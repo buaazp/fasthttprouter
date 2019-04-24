@@ -46,6 +46,15 @@ func BasicAuth(h fasthttp.RequestHandler, requiredUser, requiredPassword string)
 		// Get the Basic Authentication credentials
 		user, password, hasAuth := basicAuth(ctx)
 
+		// WARNING: This is insecure and for demonstration purposes only.
+		// DO NOT use plain-text passwords for real apps.
+		// This comparison == is also vulnerable to a timing attack.
+		// 
+		// One easy way to compare passwords safely is hash passwords with
+		// scrypt and use the CompareHashAndPassword function
+		// which works in constant time from
+		// https://github.com/elithrar/simple-scrypt/blob/master/scrypt.go:
+		
 		if hasAuth && user == requiredUser && password == requiredPassword {
 			// Delegate request to the given handle
 			h(ctx)
