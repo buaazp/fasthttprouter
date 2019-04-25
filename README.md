@@ -1,3 +1,9 @@
+# REPO HAS MOVED
+
+This request router has become part of the main FastHTTP organization. Please visit the new repository at https://github.com/fasthttp/router.
+
+Do not use this repository or issue pull requests against it.
+
 # FastHttpRouter
 [![Build Status](https://travis-ci.org/buaazp/fasthttprouter.svg?branch=master)](https://travis-ci.org/buaazp/fasthttprouter)
 [![Coverage Status](https://coveralls.io/repos/buaazp/fasthttprouter/badge.svg?branch=master&service=github)](https://coveralls.io/github/buaazp/fasthttprouter?branch=master)
